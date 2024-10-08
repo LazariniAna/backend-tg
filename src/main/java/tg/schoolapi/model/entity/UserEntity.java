@@ -2,6 +2,8 @@ package tg.schoolapi.model.entity;
 
 import jakarta.persistence.*;
 
+import java.util.List;
+
 @Entity
 @Table(
         name = "users"
@@ -42,6 +44,9 @@ UserEntity {
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "id_endereco", referencedColumnName = "id")
     private AddressEntity endereco;
+
+    @OneToMany(mappedBy = "usuario", cascade = CascadeType.REMOVE) // Adicionado
+    private List<SchedulingEntity> agendamentos;
 
     public UserEntity() {
     }

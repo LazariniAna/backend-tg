@@ -151,4 +151,10 @@ public class UserService {
             throw new RuntimeException("Scheduling não encontrado com o ID: " + id);
         }
     }
+
+    public UserDTO login(String nome) {
+        UserEntity userEntity = userRepository.findByNome(nome)
+                .orElseThrow(() -> new RuntimeException("User não encontrado com o nome: " + nome));
+        return converteEntity(userEntity);
+    }
 }
