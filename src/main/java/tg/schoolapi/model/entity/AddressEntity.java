@@ -24,16 +24,20 @@ public class AddressEntity {
     @Column(name = "estado")
     private String estado;
 
+    @Column(name = "cep")
+    private String cep;
+
     public AddressEntity() {
     }
 
-    public AddressEntity(Long id, String rua, String numero, String bairro, String cidade, String estado) {
+    public AddressEntity(Long id, String rua, String numero, String bairro, String cidade, String estado, String cep) {
         this.id = id;
         this.rua = rua;
         this.numero = numero;
         this.bairro = bairro;
         this.cidade = cidade;
         this.estado = estado;
+        this.cep = cep;
     }
 
     // Getters e setters
@@ -83,5 +87,12 @@ public class AddressEntity {
 
     public void setEstado(String estado) {
         this.estado = estado;
+    }
+    public String getCep() {
+        return cep;
+    }
+
+    public void setCep(String cep) {
+        this.cep = cep;
     }
 }
