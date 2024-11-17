@@ -46,7 +46,8 @@ public class AddressService {
                 enderecoDTO.getNumero(),
                 enderecoDTO.getBairro(),
                 enderecoDTO.getCidade(),
-                enderecoDTO.getEstado()
+                enderecoDTO.getEstado(),
+                enderecoDTO.getCep()
         );
     }
 
@@ -60,7 +61,8 @@ public class AddressService {
                 enderecoEntity.getNumero(),
                 enderecoEntity.getBairro(),
                 enderecoEntity.getCidade(),
-                enderecoEntity.getEstado()
+                enderecoEntity.getEstado(),
+                enderecoEntity.getCep()
         );
     }
 

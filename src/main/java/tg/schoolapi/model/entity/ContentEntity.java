@@ -16,10 +16,10 @@ public class ContentEntity {
     @Column(name = "subtitle")
     private String subtitle;
 
-    @Column(name = "image", columnDefinition = "TEXT")
+    @Column(name = "image", columnDefinition = "LONGTEXT")
     private String image;
 
-    @Column(name = "text", columnDefinition = "TEXT")
+    @Column(name = "text", columnDefinition = "LONGTEXT")
     private String text;
 
     @Column(name = "footer")
