@@ -1,5 +1,6 @@
 package tg.schoolapi.controller;
 
+import tg.schoolapi.model.dto.PasswordDTO;
 import tg.schoolapi.model.dto.UserDTO;
 import tg.schoolapi.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,6 +46,12 @@ public class UserController {
     public UserDTO updateUser(@PathVariable Long id, @RequestBody UserDTO userDTO){
         UserDTO userDTO1 = service.atualizaUser(id, userDTO);
         return userDTO1;
+    }
+
+    @PatchMapping("/password/change")
+    public Boolean changePassword(@RequestBody PasswordDTO passwordDTO){
+        Boolean changePass = service.atualizarSenha(passwordDTO);
+        return changePass;
     }
 
     @DeleteMapping("/{id}")

@@ -1,5 +1,6 @@
 package tg.schoolapi.service;
 
+import tg.schoolapi.model.dto.PasswordDTO;
 import tg.schoolapi.model.dto.UserDTO;
 import tg.schoolapi.model.dto.AddressDTO;
 import tg.schoolapi.model.entity.UserEntity;
@@ -38,15 +39,19 @@ public class UserService {
 
     public UserEntity converteDTO(UserDTO userDTO) {
         AddressEntity enderecoEntity = addressService.converteAddressDTO(userDTO.getAddress());
-        return new UserEntity(
-                userDTO.getId(),
-                userDTO.getNome(),
-                userDTO.getCpf(),
-                userDTO.getEmail(),
-                userDTO.getSenha(),
-                userDTO.getTelefone(),
-                enderecoEntity
-        );
+        UserEntity userEntity = new UserEntity();
+
+        userEntity.setId(userDTO.getId());
+        userEntity.setNome(userDTO.getNome());
+        userEntity.setEmail(userDTO.getEmail());
+        userEntity.setTelefone(userDTO.getTelefone());
+        userEntity.setCpf(userDTO.getCpf());
+        userEntity.setAddress(enderecoEntity);
+        System.out.println(userDTO.getSenha());
+        if (userDTO.getSenha() != null) {
+            userEntity.setSenha(userDTO.getSenha());
+        }
+        return userEntity;
     }
 
     public UserDTO converteEntity(UserEntity userEntity) {
@@ -128,14 +133,21 @@ public class UserService {
     }
 
     public UserDTO atualizaUser(Long id, UserDTO userDTO){
-        if (userRepository.existsById(id)){
+        if (userRepository.existsById(id)) {
+            UserEntity userEntityAtual = userRepository.findById(id).orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
             userDTO.setId(id);
+
+            if (userDTO.getSenha() == null) {
+                userDTO.setSenha(userEntityAtual.getSenha());
+            }
+
             UserEntity aux = userRepository.save(converteDTO(userDTO));
             return converteEntity(aux);
-        }else {
+        } else {
             return null;
         }
     }
+
 
     public UserDTO searchForId(Long id) {
         UserEntity userEntity = userRepository.findById(id)
@@ -157,4 +169,17 @@ public class UserService {
                 .orElseThrow(() -> new RuntimeException("User não encontrado com o nome: " + nome));
         return converteEntity(userEntity);
     }
+
+    public Boolean atualizarSenha(PasswordDTO passwordDTO){
+        UserEntity user = userRepository.findById(passwordDTO.userId)
+                .orElseThrow(() -> new RuntimeException("User não encontrado com o ID: " + passwordDTO.userId));
+
+        if (passwordDTO.senha != null && !passwordDTO.senha.isEmpty()) {
+            user.setSenha(passwordDTO.senha);
+        } else {
+            throw new RuntimeException("Senha não pode ser vazia");
+        }
+        return true;
+    }
+
 }

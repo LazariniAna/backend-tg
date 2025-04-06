@@ -18,6 +18,7 @@ public class LoginService {
 
     public boolean login(LoginDTO loginDTO) {
         Optional<UserEntity> user = this.userRepository.findByCpf(loginDTO.getCpf());
+
         if (user.isPresent()) {
             UserEntity userEntity = user.get();
             System.out.println(userEntity);
