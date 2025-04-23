@@ -41,6 +41,11 @@ UserEntity {
     )
     private String telefone;
 
+    @Column(
+            name = "admin"
+    )
+    private Boolean admin;
+
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "id_endereco", referencedColumnName = "id")
     private AddressEntity endereco;
@@ -51,7 +56,7 @@ UserEntity {
     public UserEntity() {
     }
 
-    public UserEntity(Long id, String nome, String cpf, String email, String senha, String telefone, AddressEntity endereco) {
+    public UserEntity(Long id, String nome, String cpf, String email, String senha, String telefone, AddressEntity endereco, Boolean admin) {
         this.id = id;
         this.nome = nome;
         this.cpf = cpf;
@@ -59,6 +64,7 @@ UserEntity {
         this.senha = senha;
         this.telefone = telefone;
         this.endereco = endereco;
+        this.admin = admin;
     }
 
     public Long getId() {
@@ -116,6 +122,13 @@ UserEntity {
 
     public void setAddress(AddressEntity endereco) {
         this.endereco = endereco;
+    }
+    public Boolean getAdmin() {
+        return admin;
+    }
+
+    public void setAdmin(Boolean admin) {
+        this.admin = admin;
     }
 }
 

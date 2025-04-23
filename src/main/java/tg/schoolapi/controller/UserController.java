@@ -1,7 +1,7 @@
 package tg.schoolapi.controller;
 
 import tg.schoolapi.model.dto.PasswordDTO;
-import tg.schoolapi.model.dto.UserDTO;
+import tg.schoolapi.model.dto.users.UserDTO;
 import tg.schoolapi.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -30,11 +30,6 @@ public class UserController {
     @GetMapping("/{id}")
     public UserDTO searchForId(@PathVariable Long id) {
         return this.service.searchForId(id);
-    }
-
-    @PutMapping
-    public List<UserDTO> alteraSenha(){
-        return service.alteraSenha();
     }
 
     @PatchMapping("/password/{id}")

@@ -3,9 +3,7 @@ package tg.schoolapi.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import tg.schoolapi.model.dto.ContentDTO;
-import tg.schoolapi.model.dto.UserDTO;
 import tg.schoolapi.service.ContentService;
-import tg.schoolapi.service.UserService;
 
 import java.util.List;
 

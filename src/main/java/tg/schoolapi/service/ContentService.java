@@ -2,14 +2,9 @@ package tg.schoolapi.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import tg.schoolapi.model.dto.AddressDTO;
 import tg.schoolapi.model.dto.ContentDTO;
-import tg.schoolapi.model.dto.UserDTO;
 import tg.schoolapi.model.entity.*;
-import tg.schoolapi.model.entity.SchedulingDTO;
-import tg.schoolapi.model.repository.AddressRepository;
 import tg.schoolapi.model.repository.ContentRepository;
-import tg.schoolapi.model.repository.UserRepository;
 
 import java.util.ArrayList;
 import java.util.List;

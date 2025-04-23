@@ -1,7 +1,9 @@
 package tg.schoolapi.service;
 
 import tg.schoolapi.model.dto.PasswordDTO;
-import tg.schoolapi.model.dto.UserDTO;
+import tg.schoolapi.model.dto.LoginDTO;
+import tg.schoolapi.model.dto.users.UserDTO;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import tg.schoolapi.model.dto.AddressDTO;
 import tg.schoolapi.model.entity.UserEntity;
 import tg.schoolapi.model.entity.AddressEntity;
@@ -24,6 +26,9 @@ public class UserService {
     @Autowired
     AddressService addressService;
 
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
     public UserService() {
     }
 
@@ -31,6 +36,10 @@ public class UserService {
         AddressEntity addressEntity = addressService.insert(userDTO.getAddress());
 
         UserEntity userEntity = this.converteDTO(userDTO);
+        System.out.println(userDTO.getSenha());
+        String senhaCriptografada = passwordEncoder.encode(userDTO.getSenha());
+        userEntity.setSenha(senhaCriptografada);
+        System.out.println(senhaCriptografada);
         userEntity.setAddress(addressEntity);
         userEntity = userRepository.save(userEntity);
 
@@ -46,6 +55,7 @@ public class UserService {
         userEntity.setEmail(userDTO.getEmail());
         userEntity.setTelefone(userDTO.getTelefone());
         userEntity.setCpf(userDTO.getCpf());
+        userEntity.setAdmin(userDTO.getAdmin());
         userEntity.setAddress(enderecoEntity);
         System.out.println(userDTO.getSenha());
         if (userDTO.getSenha() != null) {
@@ -63,7 +73,8 @@ public class UserService {
                 userEntity.getEmail(),
                 userEntity.getSenha(),
                 userEntity.getTelefone(),
-                addressDTO
+                addressDTO,
+                userEntity.getAdmin()
         );
     }
 
@@ -87,22 +98,11 @@ public class UserService {
         return listaDTOs;
     }
 
-    public List<UserDTO> alteraSenha(){
-        //recupera todos os usuarios
-        List<UserEntity> users = userRepository.findAll();
-        for(UserEntity obj: users){
-            //alterar o id do obj
-            obj.setSenha("admin");
-            //salva o obj alterado no banco de dados
-            userRepository.save(obj);
-        }
-        //precisar converter as entidades em lista de DTO
-        return converteEntities(users);
-    }
-
     public UserDTO atualizarSenhaId(Long id, UserDTO userDTO){// atualiza os dados do usuario e do endereço relacionado ao usuario
         UserEntity user = userRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("User não encontrado com o ID: " + id));
+
+        System.out.println(user);
         if (userDTO.getNome() != null) {
             user.setNome(userDTO.getNome());
         }
@@ -116,6 +116,10 @@ public class UserService {
             user.setEmail(userDTO.getEmail());
         }
         if (userDTO.getSenha() != null) {
+            user.setSenha(userDTO.getSenha());
+        }
+        System.out.println(userDTO);
+        if (userDTO.getAdmin() != false) {
             user.setSenha(userDTO.getSenha());
         }
         if (userDTO.getAddress() != null) {
@@ -164,9 +168,13 @@ public class UserService {
         }
     }
 
-    public UserDTO login(String nome) {
-        UserEntity userEntity = userRepository.findByNome(nome)
-                .orElseThrow(() -> new RuntimeException("User não encontrado com o nome: " + nome));
+    public UserDTO login(LoginDTO loginDTO) {
+        UserEntity userEntity = userRepository.findByNome(loginDTO.getCpf())
+                .orElseThrow(() -> new RuntimeException("User não encontrado com o nome: " + loginDTO.getCpf()));
+        if (passwordEncoder.matches(loginDTO.getSenha(), userEntity.getSenha())) {
+            System.out.println("Bateuuu");
+            return converteEntity(userEntity);
+        }
         return converteEntity(userEntity);
     }
 

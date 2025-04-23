@@ -10,7 +10,7 @@ import tg.schoolapi.model.repository.SchedulingRepository;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
-import tg.schoolapi.model.dto.UserDTO;
+import tg.schoolapi.model.dto.users.UserDTO;
 
 @Service
 public class SchedulingService {

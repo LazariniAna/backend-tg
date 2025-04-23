@@ -1,4 +1,6 @@
-package tg.schoolapi.model.dto;
+package tg.schoolapi.model.dto.users;
+
+import tg.schoolapi.model.dto.AddressDTO;
 
 public class UserDTO {
     private Long id;
@@ -7,18 +9,21 @@ public class UserDTO {
     private String email;
     private String senha;
     private String telefone;
+
+    private Boolean admin;
     private AddressDTO endereco;
 
     public UserDTO() {
     }
 
-    public UserDTO(Long id, String nome, String cpf, String email, String senha, String telefone, AddressDTO endereco) {
+    public UserDTO(Long id, String nome, String cpf, String email, String senha, String telefone, AddressDTO endereco, Boolean admin) {
         this.id = id;
         this.nome = nome;
         this.cpf = cpf;
         this.email = email;
         this.senha = senha;
         this.telefone = telefone;
+        this.admin = admin;
         this.endereco = endereco;
     }
 
@@ -77,5 +82,13 @@ public class UserDTO {
 
     public void setAddress(AddressDTO endereco) {
         this.endereco = endereco;
+    }
+
+    public Boolean getAdmin() {
+        return admin;
+    }
+
+    public void setAdmin(Boolean admin) {
+        this.admin = admin;
     }
 }
