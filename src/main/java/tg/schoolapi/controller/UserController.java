@@ -1,5 +1,6 @@
 package tg.schoolapi.controller;
 
+import org.springframework.http.ResponseEntity;
 import tg.schoolapi.model.dto.PasswordDTO;
 import tg.schoolapi.model.dto.users.UserDTO;
 import tg.schoolapi.service.UserService;
@@ -18,9 +19,15 @@ public class UserController {
     }
 
     @PostMapping
-    public UserDTO insert(@RequestBody UserDTO userDTO) {
-        return this.service.insert(userDTO);
+    public ResponseEntity<?> insert(@RequestBody UserDTO userDTO) {
+        try {
+            UserDTO createdUser = service.insert(userDTO);
+            return ResponseEntity.ok(createdUser);
+        } catch (IllegalArgumentException ex) {
+            return ResponseEntity.badRequest().body(ex.getMessage());
+        }
     }
+
 
     @GetMapping
     public List<UserDTO> consultaTodos() {
@@ -38,9 +45,13 @@ public class UserController {
         return userDTO1;
     }
     @PatchMapping("/{id}")
-    public UserDTO updateUser(@PathVariable Long id, @RequestBody UserDTO userDTO){
-        UserDTO userDTO1 = service.atualizaUser(id, userDTO);
-        return userDTO1;
+    public  ResponseEntity<?> updateUser(@PathVariable Long id, @RequestBody UserDTO userDTO){
+        try {
+            UserDTO userDTO1 = service.atualizaUser(id, userDTO);
+            return ResponseEntity.ok(userDTO1);
+        } catch (IllegalArgumentException ex) {
+            return ResponseEntity.badRequest().body(ex.getMessage());
+        }
     }
 
     @PatchMapping("/password/change")

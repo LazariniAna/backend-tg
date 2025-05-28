@@ -87,4 +87,11 @@ public class SchedulingService {
                 .orElseThrow(() -> new RuntimeException("User não encontrado com o ID: " + id));
         return converteEntity(entity);
     }
+    public List<SchedulingDTO> searchByUsuarioId(Long usuarioId) {
+        List<SchedulingEntity> entities = repository.findByUsuarioId(usuarioId);
+        return entities.stream()
+                .map(this::converteEntity)
+                .toList(); // ou .collect(Collectors.toList()) se usar Java < 16
+    }
+
 }

@@ -32,6 +32,10 @@ public class SchedulingController {
     public SchedulingDTO consultaPorId(@PathVariable Long id) {
         return this.service.searchForId(id);
     }
+    @GetMapping("/user/{id}")
+    public List<SchedulingDTO> consultaPorUsuarioId(@PathVariable Long id) {
+        return this.service.searchByUsuarioId(id);
+    }
 
     @PatchMapping("/{id}")
     public SchedulingDTO update(@PathVariable Long id, @RequestBody SchedulingDTO schedulingDTO){

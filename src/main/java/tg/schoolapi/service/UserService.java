@@ -1,5 +1,7 @@
 package tg.schoolapi.service;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.web.server.ResponseStatusException;
 import tg.schoolapi.model.dto.PasswordDTO;
 import tg.schoolapi.model.dto.LoginDTO;
 import tg.schoolapi.model.dto.users.UserDTO;
@@ -13,7 +15,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.server.ResponseStatusException;
 
 @Service
 public class UserService {
@@ -33,18 +38,24 @@ public class UserService {
     }
 
     public UserDTO insert(UserDTO userDTO) {
+        // Verifica se já existe usuário com mesmo CPF
+        Optional<UserEntity> existingUser = userRepository.findByCpf(userDTO.getCpf());
+        if (existingUser.isPresent()) {
+            throw new IllegalArgumentException("Já existe um usuário com esse CPF: " + userDTO.getCpf());
+        }
+
+        // Continua processo normal
         AddressEntity addressEntity = addressService.insert(userDTO.getAddress());
 
         UserEntity userEntity = this.converteDTO(userDTO);
-        System.out.println(userDTO.getSenha());
         String senhaCriptografada = passwordEncoder.encode(userDTO.getSenha());
         userEntity.setSenha(senhaCriptografada);
-        System.out.println(senhaCriptografada);
         userEntity.setAddress(addressEntity);
-        userEntity = userRepository.save(userEntity);
 
+        userEntity = userRepository.save(userEntity);
         return this.converteEntity(userEntity);
     }
+
 
     public UserEntity converteDTO(UserDTO userDTO) {
         AddressEntity enderecoEntity = addressService.converteAddressDTO(userDTO.getAddress());
@@ -57,7 +68,6 @@ public class UserService {
         userEntity.setCpf(userDTO.getCpf());
         userEntity.setAdmin(userDTO.getAdmin());
         userEntity.setAddress(enderecoEntity);
-        System.out.println(userDTO.getSenha());
         if (userDTO.getSenha() != null) {
             userEntity.setSenha(userDTO.getSenha());
         }
@@ -102,7 +112,6 @@ public class UserService {
         UserEntity user = userRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("User não encontrado com o ID: " + id));
 
-        System.out.println(user);
         if (userDTO.getNome() != null) {
             user.setNome(userDTO.getNome());
         }
@@ -118,7 +127,6 @@ public class UserService {
         if (userDTO.getSenha() != null) {
             user.setSenha(userDTO.getSenha());
         }
-        System.out.println(userDTO);
         if (userDTO.getAdmin() != false) {
             user.setSenha(userDTO.getSenha());
         }
@@ -136,20 +144,28 @@ public class UserService {
 
     }
 
-    public UserDTO atualizaUser(Long id, UserDTO userDTO){
-        if (userRepository.existsById(id)) {
-            UserEntity userEntityAtual = userRepository.findById(id).orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
-            userDTO.setId(id);
 
-            if (userDTO.getSenha() == null) {
-                userDTO.setSenha(userEntityAtual.getSenha());
-            }
+    public UserDTO atualizaUser(Long id, UserDTO userDTO) {
+        UserEntity userEntityAtual = userRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuário não encontrado"));
 
-            UserEntity aux = userRepository.save(converteDTO(userDTO));
-            return converteEntity(aux);
-        } else {
-            return null;
+        Optional<UserEntity> usuarioComMesmoCpf = userRepository.findByCpf(userDTO.getCpf());
+
+        if (usuarioComMesmoCpf.isPresent() && !usuarioComMesmoCpf.get().getId().equals(id)) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "CPF já cadastrado para outro usuário");
         }
+
+        userDTO.setId(id);
+
+        if (userDTO.getSenha() == null) {
+            userDTO.setSenha(userEntityAtual.getSenha());
+        } else{
+            String senhaCriptografada = passwordEncoder.encode(userDTO.getSenha());
+            userDTO.setSenha(senhaCriptografada);
+        }
+
+        UserEntity atualizado = userRepository.save(converteDTO(userDTO));
+        return converteEntity(atualizado);
     }
 
 
@@ -172,7 +188,6 @@ public class UserService {
         UserEntity userEntity = userRepository.findByNome(loginDTO.getCpf())
                 .orElseThrow(() -> new RuntimeException("User não encontrado com o nome: " + loginDTO.getCpf()));
         if (passwordEncoder.matches(loginDTO.getSenha(), userEntity.getSenha())) {
-            System.out.println("Bateuuu");
             return converteEntity(userEntity);
         }
         return converteEntity(userEntity);
