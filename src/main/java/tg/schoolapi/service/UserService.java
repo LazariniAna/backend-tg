@@ -168,7 +168,6 @@ public class UserService {
         return converteEntity(atualizado);
     }
 
-
     public UserDTO searchForId(Long id) {
         UserEntity userEntity = userRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("User não encontrado com o ID: " + id));
